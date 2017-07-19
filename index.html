@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="plunker">
+<head>
+  <meta charset="UTF-8">
+  <title>Playlist</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://code.angularjs.org/1.2.9/angular.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.5.0/ui-bootstrap-tpls.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css.css">
+</head>
+  <header>
+    <h3>Playlist</h3>
+  </header>
+    <div class="container">
+    <input id="search" type="text" name="search" ng-model="filterAlbum" placeholder="Search..">
+   <div ng-controller="ModalDemoCtrl">
+    <button class="btn" ng-click="open()">+ Add New Playlist</button>
+ <div id="popup1" modal="shouldBeOpen" close="close()" options="opts">
+        <div class="modal-header">
+            <h4>Build Your Playlist</h4>
+        </div>
+    <form ng-submit="submit(playlist.name, playlist.image, choise.songName, choise.songURL)">
+        <div class="modal-body">
+          <div class='step-1' ng-show='showStep(1)'>
+            <h4>Step 1 </h4>
+            <div class='steps'>
+             <div class="modal-body">
+              <label>Playlist Name</label>
+              <input type="text" ng-model="playlist.name" />
+              <label>Playlist Image URL</label>
+              <input type="text" ng-model="playlist.image" />
+             </div>
+            </div>
+          </div>
+          <div class='step-2' ng-show='showStep(2)'>
+            <h4>Step 2</h4>
+            <div class="col-sm-6">
+   <fieldset  data-ng-repeat="choice in choices">
+      <input type="text" ng-model="choice.songName" name="" placeholder="Song Name">
+      <input type="text" ng-model="choice.songURL" name="" placeholder="Song URL">
+      <button class="btn btn-outline-secondary
+" type="button" ng-show="$last" ng-click="removeChoice()">X</button>
+   </fieldset>
+   <button class="btn" type="button" ng-click="addNewChoice()">Add fields</button>
+       
+</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class='footer-stuff'>
+            <button class='btn back' type='button' ng-click='stepBack()' ng-hide='currentStep == 1'>Back</button>
+            <button class='btn next' type='button' ng-click='stepForward()' ng-hide='currentStep == 2'>Next</button>
+              <input type="submit" class="btn primary-btn" value="Submit" />
+            <button class='btn btn-warning' type='button' ng-click='close()'>Cancel</button>
+          </div>
+        </div>
+    </form>
+ </div>
+</div>
+        </form>
+    </script>
+
+<div class="container">
+    <div class="column center">
+    </div>
+    <div class="column add-bottom">
+        <div id="mainwrap" ng-show="showme">
+            <div id="nowPlay">
+            <span class="left" id="npAction">Paused...</span>
+             <div id="audio0">
+              <audio preload id="audio1" controls="controls">Your browser does not support HTML5 Audio!</audio>
+             </div>
+            </div>
+            <button class="playlist_delete_button">&#10006;</button>
+            <button class="playlist_edit_button">&#x270e;</button>
+            <div id="audiowrap">
+            </div>
+            <div id="plwrap">
+                <ul id="plList"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="full_albums">
+<div class="albums_container">
+<div class="album"><h3>Aerosmith<h3><img src="http://localhost/playlist/docs/pics/aerosmith.png"" alt></div>
+<div class="album"><h3>The Beatles<h3><img src="http://localhost/playlist/docs/pics/beatles.png" alt></div>
+<div class="album"><h3>Coldplay<h3><img src="http://localhost/playlist/docs/pics/coldplay.png" alt></div>
+<div class="album"><h3>Metallica<h3><img src="http://localhost/playlist/docs/pics/metallica.png" alt></div>
+</div>
+<div class="albums_container">
+<div class="album"><h3>Red Hot Peppers<h3><img src="http://localhost/playlist/docs/pics/red_hot_chili_peppers.png"" alt></div>
+<div class="album"><h3>Green Day<h3><img src="http://localhost/playlist/docs/pics/green_day.png" alt></div>
+<div class="album"><h3>Linken Park<h3><img src="http://localhost/playlist/docs/pics/linkin_park.png" alt></div>
+<div class="album"><h3>Metallica<h3><img src="http://localhost/playlist/docs/pics/metallica.png" alt></div>
+</div>
+</div>
+<button ng-click="showme=true">click</button>
+</body>
+</html>
