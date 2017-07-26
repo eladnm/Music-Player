@@ -1,21 +1,40 @@
 angular.module('plunker', ['ui.bootstrap']);
-var ModalDemoCtrl = function ModalDemoCtrl ($scope, $http) {
+var ModalDemoCtrl = function ModalDemoCtrl ($scope, $http, $log) {
+ jQuery(function displayAllAlbums (data) {
+    $http({
+        method: 'GET',
+        url: "api/playlist.php?type=playlist",
+    })
+    .success(function (data) {
+     console.log(data);
+     $scope.albums= data.data;
+      
+     })
+     .error(function(err) {
+        $log.error(err);
+     })    
+});    
+(function loadPlaylists(data, id, songs, name, image){
+     //console.log(data);  
+   
 
-  $scope.init=function(){
-    getAllAlbums();
-  }  
+  })();
 
-  function getAllAlbums(){
-        $http.get('api/playlist.php?type=songs').then(function(data){
-            //loadPlayer();
-        });
-  }
+// popup model
+  $scope.title = "Build Your Playlist";  
+  $scope.opts = {
+    backdropFade: true,
+    dialogFade:true
+  };
   $scope.stepBack = function () {
     $scope.currentStep -= 1;
   };
   
   $scope.stepForward = function () {
     $scope.currentStep += 1;
+  };
+    $scope.hideSteps = function () {
+    $scope.shouldBeOpen = false;
   };
   
   $scope.showStep = function (step) {
@@ -36,7 +55,7 @@ var ModalDemoCtrl = function ModalDemoCtrl ($scope, $http) {
   $scope.choices = [{song: 'choice1'}, {URL: 'choice2'}];
   
   $scope.addNewChoice = function() {
-    var newItemNo = $scope.choices.length+1;
+    var newItemNo = $scope.choices;
     $scope.choices.push({'id':'choice'+newItemNo});
   };
     
@@ -44,111 +63,148 @@ var ModalDemoCtrl = function ModalDemoCtrl ($scope, $http) {
     var lastItem = $scope.choices.length-1;
     $scope.choices.splice(lastItem);
   };
-  
-    
-  $scope.opts = {
-    backdropFade: true,
-    dialogFade:true
-  };
  $scope.submit = function () {
   var submitedData = {
-  name:  $scope.playlist.name,
-  image: $scope.playlist.image,
-  song: $scope.choices
+  name:  $scope.choise.name,
+  image: $scope.choise.image,
+  songs: $scope.choices
  }
+ // title and effects 
 
-   //$http.post("api/playlist.php?type=playlist").success(function(data){
-    //$scope.items = submitedData;
-   //});
-    console.log(submitedData);
-  }
-};
-/*
-   $scope.getSongs = function () {
-    $http.get("api/playlist.php?type=songs&id=" + id").success(function(data){
-        loadPlayer();
+// var result = [1, 2, 3, 4, 5].filter(function (yoyo) {
+//    return yoyo >= 3;
+// });
+
+// console.log(result) // [3, 4, 5]
+
+ var filledSongs = submitedData.songs.filter(function (song) {
+    return song.songName && song.songURL;
+ })
+
+    //'{name: "elad", lastName: "Nahum", fullName: "Elad Nahum", songs: [{name: "a", url: "some url"}, "b", "c"]}'
+    //'name=elad&lastName=Nahum&fullName=Elad%20Nahum&songs[]=a&songs[]=b&songs[]=c'
+// post data from popup
+    var params = [];
+    params.push('name=' + encodeURIComponent(submitedData.name));
+    params.push('image=' + encodeURIComponent(submitedData.image));
+    filledSongs.forEach(function (song, idx) {
+        params.push('songs[' + idx + '][name]=' + encodeURIComponent(song.songName));
+        params.push('songs[' + idx + '][url]=' + encodeURIComponent(song.songURL));
     });
-  }; 
-  $scope.changeStatus = function(item, status, task) {
-    if(status=='2'){status='0';}else{status='2';}
-      $http.post("api/playlist.php").success(function(data){
-        getItem();
-      });
-  };
-*/
+
+    $http({
+        method: 'POST',
+        url: "api/playlist.php?type=playlist",
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        transformRequest: function (o) {
+            return params.join('&');
+        },
+        data: {}
+    })
+    .success(function(response){
+      $scope.hideSteps();
+      console.log(response);
+    })
+    .error(function(response){
+    console.log(response);
+    });
+  }
+  $scope.playSongs=function(id) {
+    $http({
+        method: 'GET',
+        url: "api/playlist.php?type=playlist_songs&id=" + id,
+    })
+    .success(function (data) {
+        BuildPlayer(data.data.songs);
+        $scope.PlaySong();
+        console.log(data);
+    })
+     .error(function(err) {
+        $log.error(err);
+     }) 
+}
+$scope.PlaySong=function play(url){
+    var player= $('#audio1')[0];
+    player.src =  url;
+    player.play();
+}
+function BuildPlayer(songs) {
+   $scope.Songs=songs;
+   var index = 0
+   songCount = songs.length,
+   npAction = $('#npAction'),
+   $.each(songs , function(i, val){
+     audio = $('#audio1').bind('play', function () {
+                playing = true;
+                npAction.text('Now Playing...');
+            }).bind('pause', function () {
+                playing = false;
+                npAction.text('Paused...');
+            }).bind('ended', function () {
+                npAction.text('Paused...');
+                if ((index + 1) < songCount) {
+                    index++;
+                    loadSong(index);
+                    audio.play();
+                } else {
+                    audio.pause();
+                    index = 0;
+                    loadSong(index);
+                  }
+                }).get(0),
+            btnPrev = $('#btnPrev').click(function () {
+                if ((index - 1) > -1) {
+                    index--;
+                    loadSong(index);
+                    if (playing) {
+                        audio.play();
+                     }
+                    } else {
+                    audio.pause();
+                    index = 0;
+                    loadSong(index);
+                }
+            }),
+            btnNext = $('#btnNext').click(function () {
+                if ((index + 1) < songCount) {
+                    index++;
+                    loadSong(index);
+                    if (playing) {
+                        audio.play();
+                    }
+                } else {
+                    audio.pause();
+                    index = 0;
+                    loadSong(index);
+                 }
+                }),
+                li = $('#plList li').click(function () {
+                    var id = parseInt($(this).index());
+                    if (id !== index) {
+                    playSong(id);
+                }
+            }),
+                loadSong = function (url) {
+                $('.plSel').removeClass('plSel');
+                $('#plList li:eq(' + url + ')').addClass('plSel');
+                plTitle.ng-binding;
+                index = url;
+                audio.src = songs.url;
+            }
+  }) 
+ }
+};
 var b = document.documentElement;
 b.setAttribute('data-useragent', navigator.userAgent);
 b.setAttribute('data-platform', navigator.platform);
 
-// HTML5 audio player + playlist controls...
-// Inspiration: http://jonhall.info/how_to/create_a_playlist_for_html5_audio
-// Mythium Archive: https://archive.org/details/mythium/
-jQuery(function loadPlayer($) {
-    var supportsAudio = !!document.createElement('audio').canPlayType;
-    if (supportsAudio) {
-        var index = 0,
-            playing = false,
-            mediaPath = 'https://eladnm.net/playlist/music/',
-            extension = '',
-            tracks = [{
-                "track": 1,
-                "name": "Coldplay-Viva_la_vida.mp3",
-                "length": "2:46",
-                "file": "Coldplay-Viva_la_vida"
-            }, {
-                "track": 2,
-                "name": "Green_Day-American_idiot",
-                "length": "8:31",
-                "file": "Green_Day-American_idiot",
-            }, {
-                "track": 3,
-                "name": "Green_Day_21_Guns",
-                "length": "5:02",
-                "file": "Green_Day_21_Guns"
-            }, {
-                "track": 4,
-                "name": "Red_Hot_Chili_peppers-Californication",
-                "length": "8:32",
-                "file": "Red_Hot_Chili_peppers-Californication"
-            }, {
-                "track": 5,
-                "name": "Metallica-Ronnie_Rising",
-                "length": "5:05",
-                "file": "Metallica-Ronnie_Rising"
-            }, {
-                "track": 6,
-                "name": "The_Beatles-In_My_Life",
-                "length": "2:49",
-                "file": "The_Beatles-In_My_Life"
-            }, {
-                "track": 8,
-                "name": "The_Beatles-Hey_Jude_live",
-                "length": "5:27",
-                "file": "The_Beatles-Hey_Jude_live"
-            }, {
-                "track": 9,
-                "name": "Magus - Alternate Cuts",
-                "length": "5:46",
-                "file": "AC_M"
-            }, {
-                "track": 10,
-                "name": "Metallica - Nothing Else Matters",
-                "length": "6:29",
-                "file": "Metallica-Nothing_Else_Matters",
-                "image": "http://localhost/playlist/docs/pics/aerosmith.png"
-            }],
-            buildPlaylist = $.each(tracks, function(key, value) {
-                var trackNumber = value.track,
-                    trackName = value.name,
-                    trackLength = value.length;
-                if (trackNumber.toString().length === 1) {
-                    trackNumber = '0' + trackNumber;
-                } else {
-                    trackNumber = '' + trackNumber;
-                }
-                $('#plList').append('<li><div class="plItem"><div class="plNum">' + trackNumber + '.</div><div class="plTitle">' + trackName + '</div><div class="plLength">' + trackLength + '</div></div></li>');
-            }),
-            trackCount = tracks.length,
+     // var supportsAudio = !!document.createElement('audio').canPlayType;
+   // if (supportsAudio) {
+   //     var index = 0    
+   //     extension=''    
+/*
+        $.each($scope.Songs , function(i, val){
+              
             npAction = $('#npAction'),
             npTitle = $('#npTitle'),
             audio = $('#audio1').bind('play', function () {
@@ -159,60 +215,61 @@ jQuery(function loadPlayer($) {
                 npAction.text('Paused...');
             }).bind('ended', function () {
                 npAction.text('Paused...');
-                if ((index + 1) < trackCount) {
+                if ((index + 1) < songCount) {
                     index++;
-                    loadTrack(index);
+                    loadSong(index);
                     audio.play();
                 } else {
                     audio.pause();
                     index = 0;
-                    loadTrack(index);
+                    loadSong(index);
                 }
             }).get(0),
             btnPrev = $('.album').click(function () {
                 if ((index - 1) > -1) {
                     index--;
-                    loadTrack(index);
+                    loadSong(index);
                     if (playing) {
                         audio.play();
                     }
                 } else {
                     audio.pause();
                     index = 0;
-                    loadTrack(index);
+                    loadSong(index);
                 }
             }),
             btnNext = $('#btnNext').click(function () {
                 if ((index + 1) < trackCount) {
                     index++;
-                    loadTrack(index);
+                    loadSong(index);
                     if (playing) {
                         audio.play();
                     }
                 } else {
                     audio.pause();
                     index = 0;
-                    loadTrack(index);
+                    loadSong(index);
                 }
             }),
             li = $('#plList li').click(function () {
                 var id = parseInt($(this).index());
                 if (id !== index) {
-                    playTrack(id);
+                    playSong(id);
                 }
             }),
-            loadTrack = function (id) {
+            loadSong = function (id) {
                 $('.plSel').removeClass('plSel');
-                $('#plList li:eq(' + id + ')').addClass('plSel');
-                npTitle.text(tracks[id].name);
-                index = id;
-                audio.src = mediaPath + tracks[id].file + extension;
+                $('#plList li:eq(' + val.name + ')').addClass('plSel');
+                npTitle.text(val.name);
+                index = val.id;
+                audio.src =  val.URL;
             },
-            playTrack = function (id) {
-                loadTrack(id);
+            playSong = function (id) {
+                loadSong(val.name);
                 audio.play();
             };
         extension = audio.canPlayType('audio/mpeg') ? '.mp3' : audio.canPlayType('audio/ogg') ? '.ogg' : '';
-        loadTrack(index);
-    }
-});
+        loadSong(index);
+    })
+}
+*/

@@ -4,7 +4,12 @@ header {
 h3 {
   color:white;
   text-align: center;
-  margin:0px;
+  margin:0 auto;
+}
+h4.album_title {
+  color:white;
+  text-align: center;
+  margin:0 auto;
 }
 h4 {
   color:blue;
@@ -12,9 +17,6 @@ h4 {
 }
 body {
   width:100%;
-}
-#container {
-  display: flex;
 }
 .album {
   position: relative;
@@ -28,7 +30,17 @@ button.fa {
   margin-left: 45%;
   margin-top: -120%;
 }
-
+button.btn-md {
+  position: relative;
+  font-size: 20px;
+  margin-left: -50%;
+}
+#btnNext,#btnPrev {
+  font-size: 30px;
+}
+.switchSongs {
+  margin-left: 80%;
+}
 .btn {
   background: #3455d9;
   background-image: -webkit-linear-gradient(top, #3455d9, #2980b9);
@@ -52,13 +64,7 @@ button.fa {
   background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
   text-decoration: none;
 }
-#container {
-  position: fixed;top: 0;bottom: 0;left: 0;right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0,0,0,.5);
-}
+
 #content {
   position: relative;
   max-width: 80%;
@@ -85,31 +91,36 @@ input[name=search]  {
     float:right;
 }
 body { margin: 0; background: #333; }
+
 .albums_container { 
-  padding: .5vw;
-  font-size: 0;
-  display: -ms-flexbox;
-  -ms-flex-wrap: wrap;
-  -ms-flex-direction: column;
-  -webkit-flex-flow: row wrap; 
-  flex-flow: row wrap; 
+  list-style: none;
+  align-items: center;
+  -ms-box-orient: horizontal;
   display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -moz-flex;
+  display: -webkit-flex;
   display: flex;
+    -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  justify-content: center;
 }
-.albums_container div { 
-  -webkit-box-flex: auto;
-  -ms-flex: auto;
-  flex: auto; 
-  width: 200px; 
-  margin: .5vw; 
+
+.albums_container img { 
+  padding: 5px;
+  width: 170px;
+  height: auto;
+  margin: 10px;
+  
+  line-height: 100px;
+  color: white;
+  font-weight: bold;
+  font-size: 2em;
+  text-align: center; 
 }
-.albums_container div img { 
-  width: 100%; 
-  height: auto; 
-}
-@media screen and (max-width: 400px) {
-  .albums_container div { margin: 0; }
-  .albums_container { padding: 0; }
+@media screen and (max-width: 800px) {
+
   
 }
 
@@ -122,7 +133,6 @@ input[name=search]:focus {
 /* Desktop
 ================================================== */
 
-.container { position:relative; margin:0 auto; width:100% ; }
 .column { width:inherit; }
 
 
@@ -130,7 +140,7 @@ input[name=search]:focus {
 ================================================== */
 
 @media only screen and (min-width: 768px) and (max-width: 959px) {
-.container { width:556px; }
+.container {width:500px;}
 }
 
 
@@ -138,7 +148,7 @@ input[name=search]:focus {
 ================================================== */
 
 @media only screen and (max-width: 767px) {
-.container { width:300px; }
+.container {width:300px;}
 }
 
 
@@ -146,7 +156,7 @@ input[name=search]:focus {
 ================================================== */
 
 @media only screen and (min-width: 480px) and (max-width: 767px) {
-.container { width:420px; }
+.container {width:400px;}
 }
 
 
@@ -229,17 +239,19 @@ audio {
 #mainwrap {
     border-radius: 180px;
     background-color:#2751df;
-    width: 700px;
-    height: 350px;
-    margin: 0 auto;    
- box-shadow:0 0 6px 1px rgba(0,0,0,.25);
-  background-size: cover;
+    min-width: 300px;
+    max-width: 700px;
+    min-height: 300px;  
+    box-shadow:0 0 6px 1px rgba(0,0,0,.25);
+    background-size: cover;
+    margin: 0 auto;
+
 
   }
 #audiowrap { background-color:#3451e5; margin:0 auto; }
 #plwrap { 
-    margin: 0px 300px;
-width:300px;
+    margin: 0px 45%;
+    width:300px;
 
  }
 #tracks { position:relative; text-align:center; }
@@ -250,7 +262,7 @@ width:300px;
 #plList li { color:white; background-color:#; cursor:pointer; display:block; margin:0; padding:0px 0; }
 #plList li:hover { background-color:#; }
 .plItem { position:relative; }
-.plTitle { left:50px; overflow:hidden; position:absolute; right:65px; text-overflow:ellipsis; top:0; white-space:nowrap; }
+.plTitle { left:50px; overflow:hidden; right:65px; text-overflow:ellipsis; top:0; white-space:nowrap; }
 .plNum { padding-left:21px; width:25px; }
 .plLength { padding-left:21px; position:absolute; right:21px; top:0; }
 .plSel,.plSel:hover { background-color:#262223!important; cursor:default!important; }

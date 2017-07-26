@@ -72,6 +72,11 @@ function playlist_item($id) {
 	}		
 }
 
+function dd($variable) {
+	var_dump($variable);
+	die();
+}
+
 function playlists() {
 	global $conn;
 	switch($_SERVER['REQUEST_METHOD']) {
