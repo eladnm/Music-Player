@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="plunker">
+<html lang="en" ng-app="app">
 <head>
   <meta charset="UTF-8">
   <title>Playlist</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://code.angularjs.org/1.2.9/angular.js"></script>
+  <script src="https://code.angularjs.org/1.6.4/angular.js"></script>
+  <script src="https://code.angularjs.org/1.6.4/angular-animate.min.js"></script>
+  <script src="https://code.angularjs.org/1.6.4/angular-touch.min.js"></script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.5.0/ui-bootstrap-tpls.js"></script>
   <script type="text/javascript" src="js/app.js"></script>
   <script type="text/javascript" src="js/main.js"></script>
@@ -64,40 +67,38 @@
     <div class="column add-bottom">
         <div id="mainwrap">
           <div id="nowPlay">
-            <span class="left" id="npAction">Paused...</span>
             <div id="audio0">
               <audio preload id="audio1" controls>
-               
                </source>
               Your browser does not support HTML5 Audio!
               </audio>
-            <span class="switchSongs">
+              <div class="left" id="npAction">Paused...</div>
+            <div class="switchSongs">
               <button id="btnPrev">🡹</button>
               <button id="btnNext">🡻</button>
-            </span>
+            </div>
              </div>
             <div id="audiowrap"></div>
             <div id="plwrap">
             <ul>
-              <li ng-repeat="song  in Songs track by $index">
+              <li ng-repeat="song in Songs track by $index">
                   <div class="plItem">
                     <div class="plTitle" style="cursor: pointer;" ng-click="PlaySong(song.url)">{{song.name}} </div>
                   </div>
               </li>
-
             </ul>
-
-            
+         
+            <img id="mainPicAlbum"  ng-class="{'fa-spin':IsPlaying}"  ng-src="{{currentAlbum.image}}">  
           </div>
         </div>
     </div>
 </div>
 
   <div class="albums_container">
-    <div class="album" ng-repeat="album in albums | filter : filteralbum track by $index">
+    <div class="album" ng-repeat="album in albums  | filter : filteralbum ">
       <h4 class="album_title">{{album.name}}<h4>
-      <img ng-src="{{album.image}}" alt>
-      <button class="btn-md" ng-click="playSongs(album.id)">▶
+      <img id="secPicAlbum" ng-src="{{album.image}}">
+      <button class="btn-md" ng-click="playSongs(album)">▶
       </button>
 </div>
 </div>

@@ -1,24 +1,25 @@
-angular.module('plunker', ['ui.bootstrap']);
-var ModalDemoCtrl = function ModalDemoCtrl ($scope, $http, $log) {
- jQuery(function displayAllAlbums (data) {
-    $http({
-        method: 'GET',
-        url: "api/playlist.php?type=playlist",
-    })
-    .success(function (data) {
-     console.log(data);
-     $scope.albums= data.data;
-      
-     })
-     .error(function(err) {
-        $log.error(err);
-     })    
-});    
-(function loadPlaylists(data, id, songs, name, image){
-     //console.log(data);  
-   
+var app= angular.module('app', ['ui.bootstrap']);
 
-  })();
+
+app.controller("ModalDemoCtrl",function ($scope, $http, $log) {
+
+
+    function init()
+    {
+        $scope.IsPlaying=false;
+     $http({
+            method: 'GET',
+            url: "api/playlist.php?type=playlist",
+        })
+        .then(function (result) {
+        // console.log(data);
+         $scope.albums= result.data.data;
+          
+         })
+         ,function(err) {
+            $log.error(err);
+         }   
+     }; 
 
 // popup model
   $scope.title = "Build Your Playlist";  
@@ -101,66 +102,76 @@ var ModalDemoCtrl = function ModalDemoCtrl ($scope, $http, $log) {
         },
         data: {}
     })
-    .success(function(response){
+    .then(function(result){
       $scope.hideSteps();
       console.log(response);
     })
-    .error(function(response){
+    ,function(response){
     console.log(response);
-    });
+    };
   }
-  $scope.playSongs=function(id) {
+  $scope.playSongs=function(album) {
+    $scope.currentAlbum=album;
     $http({
         method: 'GET',
-        url: "api/playlist.php?type=playlist_songs&id=" + id,
+        url: "api/playlist.php?type=playlist_songs&id=" + album.id,
     })
-    .success(function (data) {
-        BuildPlayer(data.data.songs);
-        $scope.PlaySong();
-        console.log(data);
+    .then(function (result) {
+        BuildPlayer(result.data.data.songs);
+        $scope.PlaySong(result.data.data.songs[0].url);
+        console.log(result.data);
     })
-     .error(function(err) {
+     ,function(err) {
         $log.error(err);
-     }) 
+     }; 
+
+
+
 }
-$scope.PlaySong=function play(url){
+$scope.PlaySong=function (url){
     var player= $('#audio1')[0];
     player.src =  url;
     player.play();
 }
 function BuildPlayer(songs) {
+    //clone image
    $scope.Songs=songs;
    var index = 0
    songCount = songs.length,
    npAction = $('#npAction'),
-   $.each(songs , function(i, val){
-     audio = $('#audio1').bind('play', function () {
+     player = $('#audio1')
+            .bind('play', function () {
                 playing = true;
+                 $scope.IsPlaying=true;
+                 $scope.$apply()
                 npAction.text('Now Playing...');
             }).bind('pause', function () {
                 playing = false;
+                $scope.IsPlaying=false;
+                $scope.$apply()
                 npAction.text('Paused...');
-            }).bind('ended', function () {
+            }).bind('ended', function ()
+             {
                 npAction.text('Paused...');
                 if ((index + 1) < songCount) {
                     index++;
                     loadSong(index);
-                    audio.play();
+                    player.play();
                 } else {
-                    audio.pause();
+                    player.pause();
                     index = 0;
                     loadSong(index);
                   }
-                }).get(0),
+            }).get(0),
             btnPrev = $('#btnPrev').click(function () {
                 if ((index - 1) > -1) {
                     index--;
                     loadSong(index);
                     if (playing) {
-                        audio.play();
+                        player.play();
                      }
                     } else {
-                    audio.pause();
+                    player.pause();
                     index = 0;
                     loadSong(index);
                 }
@@ -170,106 +181,22 @@ function BuildPlayer(songs) {
                     index++;
                     loadSong(index);
                     if (playing) {
-                        audio.play();
+                        player.play();
                     }
                 } else {
-                    audio.pause();
+                    player.pause();
                     index = 0;
                     loadSong(index);
                  }
                 }),
-                li = $('#plList li').click(function () {
-                    var id = parseInt($(this).index());
-                    if (id !== index) {
-                    playSong(id);
+                loadSong = function (index) {
+                console.log(songs[index].url);
+                plTitle=songs[index].name;   
+                index = index;
+                player.src =songs[index].url;
+                player.play();
                 }
-            }),
-                loadSong = function (url) {
-                $('.plSel').removeClass('plSel');
-                $('#plList li:eq(' + url + ')').addClass('plSel');
-                plTitle.ng-binding;
-                index = url;
-                audio.src = songs.url;
-            }
-  }) 
+  
  }
-};
-var b = document.documentElement;
-b.setAttribute('data-useragent', navigator.userAgent);
-b.setAttribute('data-platform', navigator.platform);
-
-     // var supportsAudio = !!document.createElement('audio').canPlayType;
-   // if (supportsAudio) {
-   //     var index = 0    
-   //     extension=''    
-/*
-        $.each($scope.Songs , function(i, val){
-              
-            npAction = $('#npAction'),
-            npTitle = $('#npTitle'),
-            audio = $('#audio1').bind('play', function () {
-                playing = true;
-                npAction.text('Now Playing...');
-            }).bind('pause', function () {
-                playing = false;
-                npAction.text('Paused...');
-            }).bind('ended', function () {
-                npAction.text('Paused...');
-                if ((index + 1) < songCount) {
-                    index++;
-                    loadSong(index);
-                    audio.play();
-                } else {
-                    audio.pause();
-                    index = 0;
-                    loadSong(index);
-                }
-            }).get(0),
-            btnPrev = $('.album').click(function () {
-                if ((index - 1) > -1) {
-                    index--;
-                    loadSong(index);
-                    if (playing) {
-                        audio.play();
-                    }
-                } else {
-                    audio.pause();
-                    index = 0;
-                    loadSong(index);
-                }
-            }),
-            btnNext = $('#btnNext').click(function () {
-                if ((index + 1) < trackCount) {
-                    index++;
-                    loadSong(index);
-                    if (playing) {
-                        audio.play();
-                    }
-                } else {
-                    audio.pause();
-                    index = 0;
-                    loadSong(index);
-                }
-            }),
-            li = $('#plList li').click(function () {
-                var id = parseInt($(this).index());
-                if (id !== index) {
-                    playSong(id);
-                }
-            }),
-            loadSong = function (id) {
-                $('.plSel').removeClass('plSel');
-                $('#plList li:eq(' + val.name + ')').addClass('plSel');
-                npTitle.text(val.name);
-                index = val.id;
-                audio.src =  val.URL;
-            },
-            playSong = function (id) {
-                loadSong(val.name);
-                audio.play();
-            };
-        extension = audio.canPlayType('audio/mpeg') ? '.mp3' : audio.canPlayType('audio/ogg') ? '.ogg' : '';
-        loadSong(index);
-    })
-}
-*/
+ init();
+});

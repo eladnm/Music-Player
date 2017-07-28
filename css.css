@@ -106,6 +106,11 @@ body { margin: 0; background: #333; }
   flex-wrap: wrap;
   justify-content: center;
 }
+#mainPicAlbum {
+    width: 150px;
+    margin-left: -65%;
+    margin-top: -20%;
+}
 
 .albums_container img { 
   padding: 5px;
@@ -118,6 +123,9 @@ body { margin: 0; background: #333; }
   font-weight: bold;
   font-size: 2em;
   text-align: center; 
+}
+ul {
+  list-style-type: circle;
 }
 @media screen and (max-width: 800px) {
 
@@ -173,7 +181,6 @@ vertical-align:baseline;
 }
 
 body { line-height:1; }
-ul { list-style:none; }
 
 
 /* Basic Styles
@@ -233,15 +240,16 @@ p a,p a:visited { line-height:inherit; }
 
 /* Default / Desktop / Firefox */
 audio { 
-  margin-left: 45%;
-  width: 280px;
+  margin-left: 40%;
+  position: relative;
 }
 #mainwrap {
     border-radius: 180px;
     background-color:#2751df;
     min-width: 300px;
     max-width: 700px;
-    min-height: 300px;  
+    min-height: 300px;
+    max-height: 400px;  
     box-shadow:0 0 6px 1px rgba(0,0,0,.25);
     background-size: cover;
     margin: 0 auto;
@@ -251,18 +259,18 @@ audio {
 #audiowrap { background-color:#3451e5; margin:0 auto; }
 #plwrap { 
     margin: 0px 45%;
-    width:300px;
+    width:50%;
 
  }
 #tracks { position:relative; text-align:center; }
 #nowPlay { display:inline; margin-left:10%; }
 #npTitle { margin:0; padding:10px; text-align:right; }
-#npAction { padding:21px; position:absolute; }
+#npAction { margin-left: 17%; position:relative; }
 #plList { margin:0; }
 #plList li { color:white; background-color:#; cursor:pointer; display:block; margin:0; padding:0px 0; }
 #plList li:hover { background-color:#; }
 .plItem { position:relative; }
-.plTitle { left:50px; overflow:hidden; right:65px; text-overflow:ellipsis; top:0; white-space:nowrap; }
+.plTitle { font-size:16px; left:50px; right:65px; text-overflow:ellipsis; top:0; white-space:nowrap; background: rgba(0, 58, 204, 0.5); }
 .plNum { padding-left:21px; width:25px; }
 .plLength { padding-left:21px; position:absolute; right:21px; top:0; }
 .plSel,.plSel:hover { background-color:#262223!important; cursor:default!important; }
