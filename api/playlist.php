@@ -60,7 +60,7 @@ function playlist_item($id) {
 				response(TRUE);
 			}
 		break;
-		case 'DELETE':
+		case 'Delete':
 			$stmt = $conn->prepare("DELETE FROM playlists WHERE id=:id");
 			$stmt->execute(array(
 				'id' => $id

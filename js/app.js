@@ -32,7 +32,20 @@ app.controller("ModalDemoCtrl",function ($scope, $http, $log) {
   };
   
   $scope.stepForward = function () {
-    $scope.currentStep += 1;
+    if($scope.currentStep==1)
+    {
+        var pattern= /[.mp3]/
+        var n = $scope.choise.image.search(pattern);
+       if (n>-1) 
+       {
+        $scope.currentStep += 1;
+       }
+       else
+       {
+        //message to the client
+       }
+    }
+    
   };
     $scope.hideSteps = function () {
     $scope.shouldBeOpen = false;
@@ -64,11 +77,11 @@ app.controller("ModalDemoCtrl",function ($scope, $http, $log) {
     var lastItem = $scope.choices.length-1;
     $scope.choices.splice(lastItem);
   };
- $scope.submit = function () {
-  var submitedData = {
-  name:  $scope.choise.name,
-  image: $scope.choise.image,
-  songs: $scope.choices
+  $scope.submit = function () {
+    var submitedData = {
+      name:  $scope.choise.name,
+      image: $scope.choise.image,
+      songs: $scope.choices
  }
  // title and effects 
 
@@ -107,31 +120,53 @@ app.controller("ModalDemoCtrl",function ($scope, $http, $log) {
       console.log(response);
     })
     ,function(response){
-    console.log(response);
+      console.log(response);
     };
   }
-  $scope.playSongs=function(album) {
+  $scope.playSongs = function(album) {
     $scope.currentAlbum=album;
     $http({
-        method: 'GET',
-        url: "api/playlist.php?type=playlist_songs&id=" + album.id,
+      method: 'GET',
+      url: "api/playlist.php?type=playlist_songs&id=" + album.id,
     })
     .then(function (result) {
-        BuildPlayer(result.data.data.songs);
-        $scope.PlaySong(result.data.data.songs[0].url);
-        console.log(result.data);
+      BuildPlayer(result.data.data.songs);
+      $scope.PlaySong(result.data.data.songs[0].url);
+      console.log(result.data);
     })
-     ,function(err) {
-        $log.error(err);
+    ,function(err) {
+      $log.error(err);
      }; 
 
+    $scope.deleteAlbum= function(album) {
 
+      var params = [];
+      params.push('id=' + encodeURIComponent(album.id));
+     
+    $http({
+        method: 'DELETE',
+        url: "api/playlist.php?type=playlist_item",
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+           transformRequest: function (o) {
+            return params.join('&');
+        },
+        data: {}
+        })
+        .then(function (result) {
+          console.log(result.data);
+        })
+        ,function(err) {
+          $log.error(err);
+     }; 
+  }
+
+    
 
 }
-$scope.PlaySong=function (url){
-    var player= $('#audio1')[0];
-    player.src =  url;
-    player.play();
+$scope.PlaySong = function (url){
+  var player= $('#audio1')[0];
+  player.src =  url;
+  player.play();
 }
 function BuildPlayer(songs) {
     //clone image

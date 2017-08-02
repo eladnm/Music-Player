@@ -1,25 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="app">
+<html lang="en" ng-app="app" ng-controller="ModalDemoCtrl" ng-cloak>
 <head>
   <meta charset="UTF-8">
-  <title>Playlist</title>
+  <title>Playlist {{currentAlbum.name}}</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://code.angularjs.org/1.6.4/angular.js"></script>
   <script src="https://code.angularjs.org/1.6.4/angular-animate.min.js"></script>
   <script src="https://code.angularjs.org/1.6.4/angular-touch.min.js"></script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.5.0/ui-bootstrap-tpls.js"></script>
   <script type="text/javascript" src="js/app.js"></script>
-  <script type="text/javascript" src="js/main.js"></script>
   <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="css.css">
 </head>
   <header>
-    <h3>Playlist</h3>
+    <h3>Playlist- {{currentAlbum.name}}</h3>
   </header>
 <div class="container">
-<div ng-controller="ModalDemoCtrl">
+<div >
   <input id="search" type="text" name="search" ng-model="filteralbum" placeholder="Search..">
   <button class="btn" ng-click="open()">+ Add New Playlist</button>
   <div id="popup1" modal="shouldBeOpen" close="close()" options="opts">
@@ -72,7 +70,7 @@
                </source>
               Your browser does not support HTML5 Audio!
               </audio>
-              <div class="left" id="npAction">Paused...</div>
+              <span class="left" id="npAction">Paused...</span>
             <div class="switchSongs">
               <button id="btnPrev">🡹</button>
               <button id="btnNext">🡻</button>
@@ -81,26 +79,27 @@
             <div id="audiowrap"></div>
             <div id="plwrap">
             <ul>
-              <li ng-repeat="song in Songs track by $index">
-                  <div class="plItem">
-                    <div class="plTitle" style="cursor: pointer;" ng-click="PlaySong(song.url)">{{song.name}} </div>
+              <li ng-repeat="song in Songs track by $index" ng-mouseenter="playSongBtn=true" ng-mouseleave="playSongBtn=false">
+                  <div class="plTitle" style="cursor: pointer;" ng-click="PlaySong(song.url)">{{song.name}}
+                    <p ng-show="playSongBtn" class="btn1" style="cursor: pointer;">▶</p>
                   </div>
-              </li>
+              <li>
             </ul>
-         
-            <img id="mainPicAlbum"  ng-class="{'fa-spin':IsPlaying}"  ng-src="{{currentAlbum.image}}">  
+            <img id="mainPicAlbum" ng-class="{'fa-spin':IsPlaying}" ng-src="{{currentAlbum.image}}">  
           </div>
         </div>
     </div>
 </div>
 
   <div class="albums_container">
-    <div class="album" ng-repeat="album in albums  | filter : filteralbum ">
+    <div class="album" ng-repeat="album in albums | filter : filteralbum ">
       <h4 class="album_title">{{album.name}}<h4>
-      <img id="secPicAlbum" ng-src="{{album.image}}">
-      <button class="btn-md" ng-click="playSongs(album)">▶
-      </button>
-</div>
-</div>
+      <div class="album_container" ng-mouseenter="playAlbum=true" ng-mouseleave="playAlbum=false" class="     btn-md" ng-click="playSongs(album)">
+        <img id="secPicAlbum" ng-src="{{album.image}}">
+        <button type="button" ng-show="playAlbum" class="btn-md-del" ng-click="deleteAlbum(album)">X</button>
+        <button type="button" ng-show="playAlbum" class="btn-md">▶</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
